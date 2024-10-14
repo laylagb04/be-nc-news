@@ -46,3 +46,23 @@ describe("GET /api", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id", () => {
+  test("should respond with 200 status and an object", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then((response) => {
+        const result = response.body.article;
+        expect(typeof result).toBe("object");
+        expect(result.article_id).toBe(2);
+      });
+  });
+  test("should return 400 status code and respond with error message for a article_id which is a valid type but does not exist in our database", () => {
+    return request(app)
+      .get("/api/articles/99999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+});
