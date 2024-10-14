@@ -3,7 +3,7 @@ const app = require("../db/app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
-const { application_name } = require("pg/lib/defaults");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(data);
@@ -12,7 +12,7 @@ afterAll(() => {
   return db.end;
 });
 
-describe.only("GET /api/topics", () => {
+describe("GET /api/topics", () => {
   it('responds with an array containing the properties "slug" and "description"', () => {
     return request(app)
       .get("/api/topics")
@@ -32,6 +32,17 @@ describe.only("GET /api/topics", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("not found");
+      });
+  });
+});
+
+describe("GET /api", () => {
+  test("responds with JSON object which lists all available API endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toEqual(endpoints);
       });
   });
 });
