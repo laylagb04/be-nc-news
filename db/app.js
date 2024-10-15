@@ -1,12 +1,18 @@
 const express = require("express");
 const app = express();
-const { getTopics, getArticlesById } = require("./controllers/controllers");
+const {
+  getTopics,
+  getArticlesById,
+  getArticles,
+} = require("./controllers/controllers");
 const { fetchTopics } = require("./models/models");
 const endpoints = require("../endpoints.json");
 
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/articles", getArticles);
 
 app.get("/api", (request, response) => {
   return response.status(200).send({ endpoints: endpoints });
