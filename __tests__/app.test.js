@@ -105,3 +105,42 @@ describe("GET /api/articles", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id/comments", () => {
+  test("should respond with all comments for a specified article", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments.length).toBe(2);
+
+        comments.forEach((comment) => {
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("article_id");
+          expect(comment).toHaveProperty("created_at");
+        });
+      });
+  });
+  test("should return 400 status code and respond with error message for a article_id which is a valid type but does not exist in our database", () => {
+    return request(app)
+      .get("/api/articles/99999/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+  test("should respond with comments sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toBeSorted({
+          key: "created_at",
+          descending: true,
+        });
+      });
+  });
+});
