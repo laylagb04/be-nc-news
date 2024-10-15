@@ -4,19 +4,21 @@ const {
   getTopics,
   getArticlesById,
   getArticles,
+  getCommentsById,
 } = require("./controllers/controllers");
-const { fetchTopics } = require("./models/models");
+
 const endpoints = require("../endpoints.json");
 
 app.use(express.json());
 
+app.get("/api", (request, response) => {
+  return response.status(200).send({ endpoints: endpoints });
+});
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
 
-app.get("/api", (request, response) => {
-  return response.status(200).send({ endpoints: endpoints });
-});
+app.get("/api/articles/:article_id/comments", getCommentsById);
 
 app.get("/api/articles/:article_id", getArticlesById);
 
