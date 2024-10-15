@@ -66,3 +66,42 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+describe("GET /api/articles", () => {
+  test("should respond with 200 status code and an article array of article objects.", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeInstanceOf(Array);
+        response.body.articles.forEach((article) => {
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).not.toHaveProperty("body");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
+        });
+      });
+  });
+  test("should respond with articles sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSorted({
+          key: "created_at",
+          descending: true,
+        });
+      });
+  });
+  test("responds with an error message when passed an invalid endpoint", () => {
+    return request(app)
+      .get("/api/articls")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+});
