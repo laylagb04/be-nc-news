@@ -144,3 +144,70 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: should post a new comment to the comments table with the endpoint of article_id and respond with the comment object upon completion.", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "lurker",
+        body: "this is cool",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          author: "lurker",
+          body: "this is cool",
+          article_id: 1,
+          votes: 0,
+          comment_id: expect.any(Number),
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("should return 400 status code and respond with 'Bad request' when body is missing ", () => {
+    return request(app)
+      .post("/api/articles/99999/comments")
+      .send({
+        username: "lurker",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, missing required fields");
+      });
+  });
+  test("should return 400 status code and respond with 'Bad request' when username is missing ", () => {
+    return request(app)
+      .post("/api/articles/99999/comments")
+      .send({
+        body: "heyyy",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, missing required fields");
+      });
+  });
+  test("should return 404 status code and respond with 'Article not found' when passed an article_id that doesn't exist in the database ", () => {
+    return request(app)
+      .post("/api/articles/99999/comments")
+      .send({
+        username: "lurker",
+        body: "heyyy",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article not found");
+      });
+  });
+  test("should return 400 status code and respond with 'Bad request' when passed an invalid article_id  ", () => {
+    return request(app)
+      .post("/api/articles/cats/comments")
+      .send({
+        username: "lurker",
+        body: "heyyy",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
