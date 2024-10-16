@@ -1,4 +1,5 @@
 const db = require("../connection");
+const format = require("pg-format");
 
 const fetchTopics = () => {
   return db.query(`SELECT * FROM topics`);
@@ -48,9 +49,24 @@ const fetchCommentsById = (article_id) => {
     });
 };
 
+const createComment = (article_id, username, body) => {
+  return db
+    .query(
+      "INSERT INTO comments (article_id, author,body) VALUES ($1, $2, $3) RETURNING *",
+      [article_id, username, body]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "article does not exist" });
+      }
+      return rows[0];
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchArticlesById,
   fetchArticles,
   fetchCommentsById,
+  createComment,
 };

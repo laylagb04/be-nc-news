@@ -1,8 +1,11 @@
+const { user } = require("pg/lib/defaults");
+
 const {
   fetchTopics,
   fetchArticlesById,
   fetchArticles,
   fetchCommentsById,
+  createComment,
 } = require("../models/models");
 
 const getTopics = (req, res, next) => {
@@ -47,4 +50,27 @@ const getCommentsById = (req, res, next) => {
     });
 };
 
-module.exports = { getTopics, getArticlesById, getArticles, getCommentsById };
+const postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  if (!article_id || !username || !body) {
+    return res
+      .status(400)
+      .send({ msg: "Bad request, missing required fields" });
+  }
+  createComment(article_id, username, body)
+    .then((comment) => {
+      res.status(201).send({ comment: comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+module.exports = {
+  getTopics,
+  getArticlesById,
+  getArticles,
+  getCommentsById,
+  postComment,
+};
