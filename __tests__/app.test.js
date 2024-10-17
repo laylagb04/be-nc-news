@@ -144,7 +144,26 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
+  test("should respond with articles sorted by a topic query paramter  ", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("should respond with 404 status code when topic is provided which does not exist as a value in the database  ", () => {
+    return request(app)
+      .get("/api/articles?topic=twitter")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article with this topic not found");
+      });
+  });
 });
+
 describe("GET /api/articles/:article_id/comments", () => {
   test("should respond with all comments for a specified article", () => {
     return request(app)
