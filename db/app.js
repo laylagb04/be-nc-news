@@ -6,6 +6,7 @@ const {
   getArticles,
   getCommentsById,
   postComment,
+  getVotes,
 } = require("./controllers/controllers");
 
 const endpoints = require("../endpoints.json");
@@ -25,6 +26,8 @@ app.get("/api/articles/:article_id", getArticlesById);
 
 app.post("/api/articles/:article_id/comments", postComment);
 
+app.patch("/api/articles/:article_id", getVotes);
+
 app.use((request, response, next) => {
   response.status(404).send({ msg: "not found" });
 });
@@ -41,12 +44,15 @@ app.use((err, request, response, next) => {
 app.use((err, request, response, next) => {
   if (err.code === "22P02") {
     response.status(400).send({ msg: "Bad request" });
-  }
+  } else next(err);
+});
+app.use((err, request, response, next) => {
+  if (err.code === "23502") {
+    response.status(400).send({ msg: "Bad request" });
+  } else next(err);
 });
 app.use((err, request, response, next) => {
   response.status(500).send({ msg: "internal server error" });
 });
-
-// Er
 
 module.exports = app;

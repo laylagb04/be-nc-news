@@ -12,7 +12,9 @@ const fetchArticlesById = (article_id) => {
       if (response.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
       }
-      return response.rows[0];
+      const article = response.rows[0];
+
+      return article;
     });
 };
 
@@ -63,10 +65,26 @@ const createComment = (article_id, username, body) => {
     });
 };
 
+const updateVotes = (article_id, body) => {
+  return fetchArticlesById(article_id).then(() => {
+    return db
+      .query(
+        `UPDATE articles
+  SET votes = votes + $1
+  WHERE article_id = $2
+  RETURNING *;`,
+        [body.inc_votes, article_id]
+      )
+      .then(({ rows }) => {
+        return rows[0];
+      });
+  });
+};
 module.exports = {
   fetchTopics,
   fetchArticlesById,
   fetchArticles,
   fetchCommentsById,
   createComment,
+  updateVotes,
 };

@@ -211,3 +211,42 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("PATCH /api/articles/:article_id", () => {
+  test("200 should respond with updated number of votes and all other properties", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({
+        inc_votes: 1,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.votes).toBe(101);
+        expect(body).toHaveProperty("article_id");
+        expect(body).toHaveProperty("title");
+        expect(body).toHaveProperty("topic");
+        expect(body).toHaveProperty("author");
+        expect(body).toHaveProperty("body");
+        expect(body).toHaveProperty("created_at");
+        expect(body).toHaveProperty("votes");
+        expect(body).toHaveProperty("article_img_url");
+      });
+  });
+  test("400 should respond with 'Bad request' when body is missing", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400 should respond with 'Bad request' when body is present but an invalid field", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ crisps: "hula hoops" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
