@@ -65,6 +65,14 @@ describe("GET /api/articles/:article_id", () => {
         expect(response.body.msg).toBe("article does not exist");
       });
   });
+  test("should respond with 200 status return a comment_count which counts all the comments with specified article_id", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toHaveProperty("comment_count");
+      });
+  });
 });
 describe("GET /api/articles", () => {
   test("should respond with 200 status code and an article array of article objects.", () => {
