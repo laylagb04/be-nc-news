@@ -7,6 +7,7 @@ const {
   createComment,
   updateVotes,
   removeComment,
+  fetchUsers,
 } = require("../models/models");
 const { convertTimestampToDate } = require("../seeds/utils");
 
@@ -93,6 +94,16 @@ const deleteComment = (req, res, next) => {
     });
 };
 
+const getUsers = (req, res, next) => {
+  return fetchUsers()
+    .then((response) => {
+      res.status(200).send({ users: response.rows });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getArticlesById,
@@ -101,4 +112,5 @@ module.exports = {
   postComment,
   getVotes,
   deleteComment,
+  getUsers,
 };

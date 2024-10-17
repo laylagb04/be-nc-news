@@ -276,3 +276,27 @@ describe("DELETE api/comments/:comment_id", () => {
       });
   });
 });
+describe("GET /api/users", () => {
+  test("should respond with 200 status code and an array of user objects with properties: username, name, avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users).toBeInstanceOf(Array);
+
+        response.body.users.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
+      });
+  });
+  test("should respond with 404 status code when passed an invalid endpoint", () => {
+    return request(app)
+      .get("/api/user")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+});

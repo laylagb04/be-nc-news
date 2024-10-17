@@ -96,6 +96,10 @@ const removeComment = (comment_id) => {
     });
 };
 
+const fetchUsers = () => {
+  return db.query(`SELECT * FROM users`);
+};
+
 module.exports = {
   fetchTopics,
   fetchArticlesById,
@@ -104,4 +108,5 @@ module.exports = {
   createComment,
   updateVotes,
   removeComment,
+  fetchUsers,
 };
