@@ -6,16 +6,30 @@ const fetchTopics = () => {
 };
 
 const fetchArticlesById = (article_id) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
-    .then((response) => {
-      if (response.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "article does not exist" });
-      }
-      const article = response.rows[0];
+  const queryStr = `SELECT 
+      articles.article_id,
+      articles.title,
+      articles.topic,
+      articles.author,
+      articles.created_at,
+      articles.votes,
+      articles.article_img_url,
+      COUNT(comments.comment_id) AS comment_count
+      FROM 
+      articles 
+      LEFT JOIN 
+      comments
+      on articles.article_id = comments.article_id
+      WHERE articles.article_id = $1
+      GROUP BY articles.article_id`;
+  return db.query(queryStr, [article_id]).then((response) => {
+    if (response.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "article does not exist" });
+    }
+    const article = response.rows[0];
 
-      return article;
-    });
+    return article;
+  });
 };
 
 const fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
