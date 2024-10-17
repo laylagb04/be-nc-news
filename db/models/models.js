@@ -18,7 +18,7 @@ const fetchArticlesById = (article_id) => {
     });
 };
 
-const fetchArticles = (sort_by = "created_at", order = "desc") => {
+const fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   const queryOrder = ["asc", "desc"];
 
   const queryVals = [
@@ -37,7 +37,7 @@ const fetchArticles = (sort_by = "created_at", order = "desc") => {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  const queryStr = `SELECT 
+  let queryStr = `SELECT 
     articles.article_id,
     articles.title,
     articles.topic,
@@ -51,10 +51,24 @@ const fetchArticles = (sort_by = "created_at", order = "desc") => {
     LEFT JOIN 
     comments
     on articles.article_id = comments.article_id
-    GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.article_img_url
-    ORDER BY ${sort_by} ${order} ;`;
+    `;
 
-  return db.query(queryStr).then((response) => {
+  if (topic) {
+    queryStr += `WHERE articles.topic = $1`;
+  }
+  queryStr += ` GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.article_img_url
+  ORDER BY ${sort_by} ${order};`;
+
+  const queryTopic = topic ? [topic] : [];
+
+  return db.query(queryStr, queryTopic).then((response) => {
+    if (response.rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: "article with this topic not found",
+      });
+    }
+
     return response;
   });
 };

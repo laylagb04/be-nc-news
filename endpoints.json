@@ -39,8 +39,15 @@
     {"name": "order",
   "description": "orders articles: default is 'desc'",
 "type": "string",
-"values": ["asc", "desc"]}
+"values": ["asc", "desc"]},
+{
+  "name": "topic",
+  "description":"filters articles. if omitted all articles returned",
+  "type": "string"
+
+}
   ],
+
   "exampleResponse": {
     "'articles":[{
 
