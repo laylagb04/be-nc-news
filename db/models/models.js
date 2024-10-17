@@ -18,8 +18,26 @@ const fetchArticlesById = (article_id) => {
     });
 };
 
-const fetchArticles = () => {
-  return db.query(`SELECT 
+const fetchArticles = (sort_by = "created_at", order = "desc") => {
+  const queryOrder = ["asc", "desc"];
+
+  const queryVals = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+  ];
+
+  if (!queryOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  if (!queryVals.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  const queryStr = `SELECT 
     articles.article_id,
     articles.title,
     articles.topic,
@@ -34,7 +52,11 @@ const fetchArticles = () => {
     comments
     on articles.article_id = comments.article_id
     GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.article_img_url
-    ORDER BY created_at DESC;`);
+    ORDER BY ${sort_by} ${order} ;`;
+
+  return db.query(queryStr).then((response) => {
+    return response;
+  });
 };
 
 const fetchCommentsById = (article_id) => {

@@ -29,8 +29,18 @@
  },
 
  "GET /api/articles": {
-  "description": "serves an article array of article objects in descending date order, with added comment_count property",
-  "queries": [],
+  "description": "serves an article array of article objects in default descending date order, with added comment_count property, and takes a sort_by parameter and order parameter which can be either asc or desc",
+  "queries": [
+    {"name": "sort_by",
+  "description": "sorts articles. default is 'created_at'",
+"type":"string",
+"values": ["title", "topic", "author", "created_at", "votes", "article_id"]
+},
+    {"name": "order",
+  "description": "orders articles: default is 'desc'",
+"type": "string",
+"values": ["asc", "desc"]}
+  ],
   "exampleResponse": {
     "'articles":[{
 

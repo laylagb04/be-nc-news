@@ -33,7 +33,8 @@ const getArticlesById = (req, res, next) => {
 };
 
 const getArticles = (req, res, next) => {
-  return fetchArticles()
+  const { sort_by, order } = req.query;
+  return fetchArticles(sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles: articles.rows });
     })
