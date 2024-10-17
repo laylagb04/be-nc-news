@@ -1,12 +1,13 @@
 const { user } = require("pg/lib/defaults");
-
 const {
   fetchTopics,
   fetchArticlesById,
   fetchArticles,
   fetchCommentsById,
   createComment,
+  updateVotes,
 } = require("../models/models");
+const { convertTimestampToDate } = require("../seeds/utils");
 
 const getTopics = (req, res, next) => {
   return fetchTopics()
@@ -67,10 +68,23 @@ const postComment = (req, res, next) => {
       next(err);
     });
 };
+
+const getVotes = (req, res, next) => {
+  const { article_id } = req.params;
+  const body = req.body;
+  return updateVotes(article_id, body)
+    .then((article) => {
+      res.status(200).send(article);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 module.exports = {
   getTopics,
   getArticlesById,
   getArticles,
   getCommentsById,
   postComment,
+  getVotes,
 };
