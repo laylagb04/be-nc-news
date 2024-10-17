@@ -104,6 +104,46 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("not found");
       });
   });
+  test("should respond with articles sorted by a sort_by query parameter such as votes ", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({ key: "votes", descending: true });
+      });
+  });
+  test("should respond with articles sorted by a sort_by query parameter such as title ", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({ key: "title", descending: true });
+      });
+  });
+  test("should respond with articles sorted by a sort_by query parameter such as votes and an order parameter for ascending or descending ", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({ key: "votes", descending: false });
+      });
+  });
+  test('should respond with 400 "Bad request" when provided a sort_by column that doesn\'t exist', () => {
+    return request(app)
+      .get("/api/articles?sort_by=cats")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test('should respond with 400 "Bad request" when provided an invalid order ', () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=cats")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
 });
 describe("GET /api/articles/:article_id/comments", () => {
   test("should respond with all comments for a specified article", () => {
