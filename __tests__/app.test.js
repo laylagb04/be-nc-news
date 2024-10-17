@@ -250,3 +250,29 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+describe("DELETE api/comments/:comment_id", () => {
+  test("should respond with 204 status code and delete specified comment from data", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then((response) => {
+        expect(response.status).toBe(204);
+      });
+  });
+  test("should respond with 404 status code when passed a comment_id not present in the database", () => {
+    return request(app)
+      .delete("/api/comments/999999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Comment not found");
+      });
+  });
+  test("should respond with 400 status code when passed an invalid comment_id", () => {
+    return request(app)
+      .delete("/api/comments/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});

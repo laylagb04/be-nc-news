@@ -7,6 +7,7 @@ const {
   getCommentsById,
   postComment,
   getVotes,
+  deleteComment,
 } = require("./controllers/controllers");
 
 const endpoints = require("../endpoints.json");
@@ -28,6 +29,7 @@ app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", getVotes);
 
+app.delete("/api/comments/:comment_id", deleteComment);
 app.use((request, response, next) => {
   response.status(404).send({ msg: "not found" });
 });
