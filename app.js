@@ -9,9 +9,9 @@ const {
   getVotes,
   deleteComment,
   getUsers,
-} = require("./controllers/controllers");
+} = require("./db/controllers/controllers");
 
-const endpoints = require("../endpoints.json");
+const endpoints = require("./endpoints.json");
 
 app.use(express.json());
 
