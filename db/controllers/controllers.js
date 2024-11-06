@@ -58,13 +58,14 @@ const getCommentsById = (req, res, next) => {
 const postComment = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
+  console.log(article_id);
 
   if (!article_id || !username || !body) {
     return res
       .status(400)
       .send({ msg: "Bad request, missing required fields" });
   }
-  createComment(article_id, username, body)
+  return createComment(article_id, username, body)
     .then((comment) => {
       res.status(201).send({ comment: comment });
     })
